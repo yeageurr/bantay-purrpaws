@@ -176,6 +176,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             justify-content: center;
             padding: clamp(24px, 4vw, 48px);
             overflow-y: auto;
+            margin-right: 20px;
         }
 
         .login-card {
@@ -674,18 +675,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <div class="login-bg">
     <img src="<?= url('assets/dog.jpg') ?>" alt="" class="login-bg-img">
     <div class="login-bg-overlay"></div>
-</div>
-
-<!-- Left hero text (desktop only) -->
-<div class="login-hero" aria-hidden="true">
-    <span class="login-hero-paws">🐾</span>
-    <h1>Give a pet a<br><em>loving home.</em></h1>
-    <p>Report strays, connect with rescuers, and find your next furry family member — all in one place.</p>
-    <div class="login-hero-badges">
-        <span class="login-hero-badge">🐕 Adopt a Dog</span>
-        <span class="login-hero-badge">🐈 Rescue a Cat</span>
-        <span class="login-hero-badge">📍 Report Strays</span>
-    </div>
 </div>
 
 <!-- Right login panel -->
