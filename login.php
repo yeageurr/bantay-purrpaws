@@ -176,7 +176,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             justify-content: center;
             padding: clamp(24px, 4vw, 48px);
             overflow-y: auto;
-            margin-right: 30px;
+            margin-right: 50px;
         }
 
         .login-card {
@@ -693,7 +693,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php if (is_file(__DIR__ . '/assets/logo.png')): ?>
                 <img src="<?= url('assets/logo.png') ?>" alt="BantayPurrPaws" class="card-brand-img">
             <?php else: ?>
-                <span class="card-brand-mark">🐾</span>
+                <span class="card-brand-mark">❤️</span>
             <?php endif; ?>
             <span class="card-brand-name">BantayPurrPaws</span>
         </a>
