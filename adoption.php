@@ -28,6 +28,10 @@ require_once __DIR__ . '/includes/header.php';
 ?>
 
 <div class="adoption-page">
+    <div class="flex gap-3 mb-6">
+        <a href="<?= url('dashboard.php') ?>" class="btn btn-ghost">← Back to Home</a>
+    </div>
+
     <div class="page-header">
         <h2>Find Your New Companion</h2>
         <p>Browse pets ready for adoption. View details and submit an application when you're ready.</p>

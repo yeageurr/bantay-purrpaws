@@ -17,6 +17,10 @@ $items     = getUserAnnouncements((int) $user['id'], 50);
 require_once __DIR__ . '/includes/header.php';
 ?>
 
+<div class="flex gap-3 mb-6">
+    <a href="<?= url('dashboard.php') ?>" class="btn btn-ghost">← Back to Home</a>
+</div>
+
 <div class="page-header">
     <h2>Announcements</h2>
     <p>Official updates posted by the BantayPurrPaws administration team.</p>

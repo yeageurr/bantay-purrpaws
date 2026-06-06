@@ -18,14 +18,16 @@ $reports = $stmt->fetchAll();
 require_once __DIR__ . '/includes/header.php';
 ?>
 
+<div class="flex gap-3 mb-6">
+    <a href="<?= url('dashboard.php') ?>" class="btn btn-ghost">← Back to Home</a>
+    <a href="<?= url('report.php') ?>" class="btn btn-accent">🐾 Submit New Report</a>
+</div>
+
 <div class="page-header">
     <h2>My Rescue Reports</h2>
     <p>Track the status of all your submitted reports.</p>
 </div>
 
-<div class="flex gap-3 mb-6">
-    <a href="<?= url('report.php') ?>" class="btn btn-accent">🐾 Submit New Report</a>
-</div>
 
 <div class="card">
     <?php if (empty($reports)): ?>

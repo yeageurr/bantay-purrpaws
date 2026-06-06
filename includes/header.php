@@ -1,9 +1,6 @@
 <?php
 require_once __DIR__ . '/auth.php';
 
-// ── Refresh staff permissions live from DB on each page load ─────────────────
-// When an admin changes a staff member's permissions, the session's cached
-// staff_permissions must be updated immediately — no re-login required.
 if (isLoggedIn() && ($_SESSION['role'] ?? '') === 'staff') {
     $staffId = (int) ($_SESSION['user_id'] ?? 0);
     if ($staffId) {
@@ -11,7 +8,6 @@ if (isLoggedIn() && ($_SESSION['role'] ?? '') === 'staff') {
         $changedAt    = $staffRow['permissions_changed_at'] ?? null;
         $sessionStart = $_SESSION['session_started_at'] ?? 0;
         if ($changedAt && strtotime($changedAt) > $sessionStart) {
-            // Refresh permissions in the current session — no forced re-login needed
             $raw = $staffRow['staff_permissions'] ?? null;
             if ($raw !== null && is_string($raw)) {
                 $decoded = json_decode($raw, true);
@@ -19,9 +15,7 @@ if (isLoggedIn() && ($_SESSION['role'] ?? '') === 'staff') {
             } else {
                 $_SESSION['staff_permissions'] = is_array($raw) ? $raw : null;
             }
-            // Update session start so we don't re-check on every single request
             $_SESSION['session_started_at'] = time();
-            // Notify the staff member once that their permissions were updated
             if (empty($_SESSION['perms_refresh_notified_at']) ||
                 $_SESSION['perms_refresh_notified_at'] < strtotime($changedAt)) {
                 $_SESSION['perms_refresh_notified_at'] = time();
@@ -33,14 +27,7 @@ if (isLoggedIn() && ($_SESSION['role'] ?? '') === 'staff') {
 
 $navUser = currentUser();
 $currentPage = basename($_SERVER['PHP_SELF'], '.php');
-
-function navItem($href, $icon, $label, $page, $current) {
-    $active = ($current === $page || str_starts_with($current, $page)) ? 'active' : '';
-    echo "<a href=\"$href\" class=\"nav-item $active\">
-            <span class=\"nav-icon\">$icon</span>
-            <span>$label</span>
-          </a>";
-}
+$isAdminArea = str_starts_with($_SERVER['PHP_SELF'], '/admin/') || str_contains($_SERVER['PHP_SELF'], '/admin/');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -60,91 +47,19 @@ function navItem($href, $icon, $label, $page, $current) {
     <?php endforeach; ?>
 </head>
 <body>
-<div class="app-layout">
-    <aside class="sidebar" id="sidebar">
-        <div class="sidebar-logo">
-            <a href="<?= dashboardHomeUrl() ?>" class="logo-mark" title="Bantay PurrPaws">
-                <img src="<?= url('assets/logo.png') ?>" alt="Bantay PurrPaws" class="sidebar-logo-img">
-            </a>
-            <p>Rescue &amp; Adoption System</p>
-        </div>
-
-        <nav class="sidebar-nav">
-            <?php if (isAdministrator()): ?>
-                <div class="nav-section-label">Overview</div>
-                <?php navItem(url('admin/dashboard.php'), '⊞', 'Dashboard', 'dashboard', $currentPage); ?>
-
-                <div class="nav-section-label">Rescue</div>
-                <?php navItem(url('admin/reports.php'), '📋', 'Rescue Reports', 'reports', $currentPage); ?>
-
-                <div class="nav-section-label">Adoption</div>
-                <?php navItem(url('admin/pets.php'), '🐾', 'Pet Management', 'pets', $currentPage); ?>
-                <?php navItem(url('admin/adoption-requests.php'), '📝', 'Adoption Requests', 'adoption-requests', $currentPage); ?>
-
-                <div class="nav-section-label">System</div>
-                <?php navItem(url('admin/announcements.php'), '📢', 'Announcements', 'announcements', $currentPage); ?>
-                <?php navItem(url('admin/staff.php'), '🛡', 'Staff Accounts', 'staff', $currentPage); ?>
-                <?php navItem(url('admin/users.php'), '👥', 'User Accounts', 'users', $currentPage); ?>
-
-                <div class="nav-section-label">Account</div>
-                <?php navItem(url('profile.php'), '👤', 'My Profile', 'profile', $currentPage); ?>
-
-            <?php elseif (isStaff()): ?>
-                <div class="nav-section-label">Overview</div>
-                <?php navItem(url('admin/dashboard.php'), '⊞', 'Dashboard', 'dashboard', $currentPage); ?>
-
-                <div class="nav-section-label">Rescue</div>
-                <?php navItem(url('admin/reports.php'), '📋', 'Rescue Reports', 'reports', $currentPage); ?>
-
-                <div class="nav-section-label">Shelter &amp; Adoption</div>
-                <?php navItem(url('admin/pets.php'), '🐾', 'Animal Records', 'pets', $currentPage); ?>
-                <?php navItem(url('admin/adoption-requests.php'), '📊', 'Adoption Monitor', 'adoption-requests', $currentPage); ?>
-
-                <div class="nav-section-label">Account</div>
-                <?php navItem(url('profile.php'), '👤', 'My Profile', 'profile', $currentPage); ?>
-
-            <?php else: ?>
-                <div class="nav-section-label">Overview</div>
-                <?php navItem(url('dashboard.php'), '⊞', 'Dashboard', 'dashboard', $currentPage); ?>
-
-                <div class="nav-section-label">Rescue</div>
-                <?php navItem(url('report.php'), '＋', 'Submit Report', 'report', $currentPage); ?>
-                <?php navItem(url('my-reports.php'), '📋', 'My Reports', 'my-reports', $currentPage); ?>
-
-                <div class="nav-section-label">Adoption</div>
-                <?php navItem(url('adoption.php'), '❤', 'Adopt a Pet', 'adoption', $currentPage); ?>
-
-                <div class="nav-section-label">Updates</div>
-                <?php navItem(url('announcements.php'), '📢', 'Announcements', 'announcements', $currentPage); ?>
-
-                <div class="nav-section-label">Account</div>
-                <?php navItem(url('profile.php'), '👤', 'My Profile', 'profile', $currentPage); ?>
-            <?php endif; ?>
-        </nav>
-
-        <div class="sidebar-footer">
-            <div class="user-card">
-                <?php if (!empty($navUser['avatar'])): ?>
-                <img src="<?= sanitize($navUser['avatar']) ?>" alt="" class="user-avatar" style="object-fit:cover;padding:0;">
+<div class="app-layout app-layout-topnav">
+    <header class="site-header">
+        <div class="site-header-inner">
+            <a href="<?= dashboardHomeUrl() ?>" class="site-brand" title="BantayPurrPaws Home">
+                <?php if (is_file(__DIR__ . '/../assets/logo.png')): ?>
+                <img src="<?= url('assets/logo.png') ?>" alt="" class="site-brand-img">
                 <?php else: ?>
-                <div class="user-avatar"><?= strtoupper(substr($navUser['name'], 0, 2)) ?></div>
+                <span class="site-brand-icon" aria-hidden="true">🐾</span>
                 <?php endif; ?>
-                <div class="user-info">
-                    <div class="name"><?= sanitize($navUser['name']) ?></div>
-                    <div class="role-badge <?= roleBadgeClass() ?>"><?= roleLabel() ?></div>
-                </div>
-                <a href="<?= url('logout.php') ?>" class="logout-btn" title="Logout">⎋</a>
-            </div>
-        </div>
-    </aside>
+                <span class="site-brand-text">BantayPurrPaws</span>
+            </a>
 
-    <div class="main-content">
-        <header class="topbar">
-            <div class="flex items-center gap-3">
-                <button class="btn btn-ghost btn-icon sidebar-toggle" id="sidebarToggle" type="button" aria-label="Open menu" aria-expanded="false">☰</button>
-                <span class="topbar-title"><?= sanitize($pageTitle ?? 'BantayPurrPaws') ?></span>
-            </div>
-            <div class="topbar-actions">
+            <div class="site-header-actions">
                 <?php require __DIR__ . '/notification-bell.php'; ?>
                 <script>
                 function headerMarkRead(id, el) {
@@ -175,23 +90,54 @@ function navItem($href, $icon, $label, $page, $current) {
                     if (badge) { badge.textContent = ''; badge.style.display = 'none'; }
                 }
                 </script>
-                <span class="text-sm text-secondary"><?= sanitize($navUser['name']) ?></span>
-                <span class="role-badge <?= roleBadgeClass() ?>"><?= roleLabel() ?></span>
-            </div>
-        </header>
 
-        <main class="page-body">
-            <?php
-            if ($success = flash('success')) {
-                echo "<div class=\"alert alert-success\">✓ " . sanitize($success) . "</div>";
-            }
-            if ($error = flash('error')) {
-                echo "<div class=\"alert alert-error\">✕ " . sanitize($error) . "</div>";
-            }
-            if ($info = flash('info')) {
-                echo "<div class=\"alert alert-info\">" . sanitize($info) . "</div>";
-            }
-            if ($warning = flash('warning')) {
-                echo "<div class=\"alert alert-warning\">⚠ " . sanitize($warning) . "</div>";
-            }
-            ?>
+                <div class="profile-menu" id="profileMenu">
+                    <button type="button" class="profile-menu-trigger" id="profileMenuTrigger" aria-expanded="false" aria-haspopup="true">
+                        <?php if (!empty($navUser['avatar'])): ?>
+                        <img src="<?= sanitize($navUser['avatar']) ?>" alt="" class="profile-avatar">
+                        <?php else: ?>
+                        <span class="profile-avatar profile-avatar-initials"><?= strtoupper(substr($navUser['name'], 0, 1)) ?></span>
+                        <?php endif; ?>
+                        <span class="profile-menu-label hide-mobile">My Profile</span>
+                        <svg class="profile-chevron" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path fill="currentColor" d="M4.5 6l3.5 3.5L11.5 6z"/></svg>
+                    </button>
+                    <div class="profile-menu-dropdown" id="profileMenuDropdown">
+                        <div class="profile-menu-header">
+                            <div class="profile-menu-name"><?= sanitize($navUser['name']) ?></div>
+                            <div class="profile-menu-email"><?= sanitize($navUser['email'] ?? '') ?></div>
+                            <span class="role-badge <?= roleBadgeClass() ?>"><?= roleLabel() ?></span>
+                        </div>
+                        <div class="profile-menu-links">
+                            <a href="<?= url('profile.php') ?>" class="profile-menu-link">
+                                <span aria-hidden="true">👤</span> My Profile
+                            </a>
+                            <?php if (!isAdmin()): ?>
+                            <a href="<?= url('notifications.php') ?>" class="profile-menu-link">
+                                <span aria-hidden="true">🔔</span> Notifications
+                            </a>
+                            <?php endif; ?>
+                            <a href="<?= url('logout.php') ?>" class="profile-menu-link profile-menu-link-danger">
+                                <span aria-hidden="true">⎋</span> Log Out
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="page-body">
+        <?php
+        if ($success = flash('success')) {
+            echo "<div class=\"alert alert-success\">✓ " . sanitize($success) . "</div>";
+        }
+        if ($error = flash('error')) {
+            echo "<div class=\"alert alert-error\">✕ " . sanitize($error) . "</div>";
+        }
+        if ($info = flash('info')) {
+            echo "<div class=\"alert alert-info\">" . sanitize($info) . "</div>";
+        }
+        if ($warning = flash('warning')) {
+            echo "<div class=\"alert alert-warning\">⚠ " . sanitize($warning) . "</div>";
+        }
+        ?>

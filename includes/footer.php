@@ -1,5 +1,4 @@
         </main>
-    </div><!-- /.main-content -->
 </div><!-- /.app-layout -->
 
 <?php if (!empty($useBootstrap)): ?>

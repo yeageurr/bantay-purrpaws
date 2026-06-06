@@ -110,6 +110,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 require_once __DIR__ . '/includes/header.php';
 ?>
 
+<div class="flex gap-3 mb-6">
+    <a href="<?= url('dashboard.php') ?>" class="btn btn-ghost">← Back to Home</a>
+</div>
+
 <div class="page-header">
     <h2>Submit a Rescue Report</h2>
     <p>Fill in the details below to alert a rescue team about a stray animal in need.</p>
