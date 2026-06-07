@@ -181,3 +181,9 @@
 {"time":"2026-06-07T12:48:04+00:00","channel":"mailer","level":"INFO","message":"Email sent.","context":{"to":"jeofreyjamess@gmail.com","subject":"BantayPurrPaws — Adoption Application Approved"}}
 {"time":"2026-06-07T12:48:32+00:00","channel":"mailer","level":"INFO","message":"Email sent.","context":{"to":"riccselling05@gmail.com","subject":"BantayPurrPaws — Email Verification OTP"}}
 {"time":"2026-06-07T12:49:16+00:00","channel":"notifications","level":"INFO","message":"Notification created.","context":{"type":"system","id":58}}
+{"time":"2026-06-07T13:03:17+00:00","channel":"mailer","level":"INFO","message":"Email sent.","context":{"to":"juniferjose05@gmail.com","subject":"BantayPurrPaws — Email Verification OTP"}}
+{"time":"2026-06-07T13:04:07+00:00","channel":"notifications","level":"INFO","message":"Notification created.","context":{"type":"system","id":59}}
+{"time":"2026-06-07T13:05:28+00:00","channel":"mailer","level":"INFO","message":"Email sent.","context":{"to":"juniferjose05@gmail.com","subject":"BantayPurrPaws — Verify Your Sign-In Attempt"}}
+{"time":"2026-06-07T13:06:57+00:00","channel":"mailer","level":"INFO","message":"Email sent.","context":{"to":"juniferjose05@gmail.com","subject":"BantayPurrPaws — Verify Your Sign-In Attempt"}}
+{"time":"2026-06-07T13:08:14+00:00","channel":"mailer","level":"INFO","message":"Email sent.","context":{"to":"juniferjose05@gmail.com","subject":"BantayPurrPaws — Number Matching Verification"}}
+{"time":"2026-06-07T13:09:15+00:00","channel":"mailer","level":"INFO","message":"Email sent.","context":{"to":"juniferjose05@gmail.com","subject":"BantayPurrPaws — Email Verification OTP"}}
