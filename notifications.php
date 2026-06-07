@@ -4,59 +4,38 @@ require_once __DIR__ . '/includes/notifications.php';
 requireLogin();
 
 $pageTitle = 'Notifications';
-$extraCss  = [];
 require_once __DIR__ . '/includes/header.php';
 ?>
-<style>
-.notif-center{max-width:700px;margin:0 auto;padding:24px 20px 40px;}
-.notif-center h1{font-size:20px;font-weight:700;margin:0 0 4px;color:#000000;}
-.notif-center .subtitle{color:#444444;font-size:14px;margin:0 0 20px;}
-.notif-toolbar{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
-.notif-toolbar select{flex:1;padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;background:var(--surface-1);color:#000000;font-size:13px;}
-.notif-list{display:flex;flex-direction:column;gap:6px;}
-.notif-card{display:flex;gap:14px;align-items:flex-start;padding:14px 16px;background:var(--surface-1);border:1.5px solid var(--border);border-radius:10px;cursor:pointer;transition:border-color .18s,box-shadow .18s;text-decoration:none;color:#000000 !important;}
-.notif-card:hover{border-color:var(--primary);box-shadow:0 2px 8px rgba(0,0,0,.07);}
-.notif-card.unread{background:var(--surface-2);border-color:var(--primary-soft,var(--border));}
-.notif-card.unread .notif-dot{width:8px;height:8px;border-radius:50%;background:var(--primary);flex-shrink:0;margin-top:6px;}
-.notif-card:not(.unread) .notif-dot{width:8px;flex-shrink:0;}
-.notif-icon{font-size:20px;flex-shrink:0;width:32px;text-align:center;}
-.notif-body{flex:1;min-width:0;}
-.notif-msg{font-size:14px;font-weight:500;color:#000000 !important;line-height:1.4;margin:0 0 4px;}
-.notif-meta{font-size:12px;color:#444444 !important;}
-.notif-meta span{display:inline-block;margin-right:8px;color:#444444 !important;}
-.notif-empty{text-align:center;padding:60px 20px;color:#555555;}
-.notif-empty .icon{font-size:40px;margin-bottom:12px;}
-/* Badge colours kept vivid for type-at-a-glance readability */
-.badge-type{display:inline-block;font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;text-transform:uppercase;letter-spacing:.5px;}
-.badge-adoption{background:#fef3c7;color:#000000;}
-.badge-system{background:#f3f4f6;color:#000000;}
-.badge-otp{background:#fce7f3;color:#000000;}
-.notif-loading{text-align:center;padding:40px;color:#555555;}
-</style>
 
-<div class="notif-center">
-    <h1>🔔 Notification Center</h1>
-    <p class="subtitle">Your recent activity and system alerts</p>
+<div class="flex gap-3 mb-6">
+    <a href="<?= url('dashboard.php') ?>" class="btn btn-ghost">← Back to Home</a>
+</div>
 
-    <div class="notif-toolbar">
-        <select id="filterType" onchange="loadNotifications()">
-            <option value="">All types</option>
-            <option value="adoption">🐾 Adoption</option>
-            <option value="system">🔔 System</option>
-            <option value="otp">🔐 Security</option>
-        </select>
-        <select id="filterRead" onchange="loadNotifications()">
-            <option value="">All</option>
-            <option value="unread">Unread only</option>
-            <option value="read">Read only</option>
-        </select>
-        <button class="btn btn-outline" id="markAllBtn" onclick="markAllRead()" style="white-space:nowrap;padding:8px 14px;font-size:13px;">
-            Mark all read
-        </button>
-    </div>
+<div class="page-header">
+    <h2>Notification Center</h2>
+    <p>Your recent activity and system alerts.</p>
+</div>
 
-    <div id="notifList" class="notif-list">
-        <div class="notif-loading">Loading notifications…</div>
+<div class="card">
+    <div class="card-body">
+        <div class="notif-toolbar">
+            <select id="filterType" class="form-control" onchange="loadNotifications()">
+                <option value="">All types</option>
+                <option value="adoption">🐾 Adoption</option>
+                <option value="system">🔔 System</option>
+                <option value="otp">🔐 Security</option>
+            </select>
+            <select id="filterRead" class="form-control" onchange="loadNotifications()">
+                <option value="">All</option>
+                <option value="unread">Unread only</option>
+                <option value="read">Read only</option>
+            </select>
+            <button class="btn btn-ghost" id="markAllBtn" onclick="markAllRead()">Mark all read</button>
+        </div>
+
+        <div id="notifList" class="notif-list">
+            <div class="notif-loading">Loading notifications…</div>
+        </div>
     </div>
 </div>
 
@@ -86,7 +65,7 @@ function renderNotifications() {
 
     const list = document.getElementById('notifList');
     if (!items.length) {
-        list.innerHTML = '<div class="notif-empty"><div class="icon">🔕</div>No notifications here.</div>';
+        list.innerHTML = '<div class="empty-state"><div class="empty-icon">🔕</div><h3>No notifications</h3><p>You\'re all caught up.</p></div>';
         return;
     }
 

@@ -135,14 +135,14 @@ $isAdmin  = $loggedIn && isAdmin();
 
     <!-- Top bar -->
     <div class="terms-topbar">
-        <a class="brand" href="<?= url('index.php') ?>">
+        <a class="brand" href="<?= url('login.php') ?>">
             <img src="<?= url('assets/logo.png') ?>" alt="BantayPurrPaws">
             BantayPurrPaws
         </a>
         <?php if ($loggedIn): ?>
             <a href="<?= url($isAdmin ? 'admin/dashboard.php' : 'dashboard.php') ?>" class="back-link">← Back to Dashboard</a>
         <?php else: ?>
-            <a href="<?= url('index.php') ?>" class="back-link">← Back to Home</a>
+            <a href="<?= url('login.php') ?>" class="back-link">← Back to Home</a>
         <?php endif; ?>
     </div>
 
@@ -284,7 +284,7 @@ $isAdmin  = $loggedIn && isAdmin();
 
     <div class="terms-footer-bar">
         &copy; <?= date('Y') ?> BantayPurrPaws &mdash; Stray Animal Rescue &amp; Adoption System &nbsp;|&nbsp;
-        <a href="<?= url('index.php') ?>">Home</a>
+        <a href="<?= url('login.php') ?>">Home</a>
     </div>
 </div>
 </body>
