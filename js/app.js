@@ -1,59 +1,24 @@
 document.addEventListener('DOMContentLoaded', function () {
-    const sidebar       = document.getElementById('sidebar');
-    const sidebarToggle = document.getElementById('sidebarToggle');
-    let backdrop = document.getElementById('sidebarBackdrop');
+    // Profile dropdown menu
+    const profileMenu = document.getElementById('profileMenu');
+    const profileTrigger = document.getElementById('profileMenuTrigger');
 
-    if (!backdrop) {
-        backdrop = document.createElement('div');
-        backdrop.id = 'sidebarBackdrop';
-        backdrop.className = 'sidebar-backdrop';
-        backdrop.setAttribute('aria-hidden', 'true');
-        document.body.appendChild(backdrop);
-    }
-
-    function closeSidebar() {
-        sidebar?.classList.remove('open');
-        backdrop.classList.remove('open');
-        document.body.classList.remove('sidebar-open');
-        sidebarToggle?.setAttribute('aria-expanded', 'false');
-        sidebarToggle?.setAttribute('aria-label', 'Open menu');
-    }
-
-    function openSidebar() {
-        sidebar?.classList.add('open');
-        backdrop.classList.add('open');
-        document.body.classList.add('sidebar-open');
-        sidebarToggle?.setAttribute('aria-expanded', 'true');
-        sidebarToggle?.setAttribute('aria-label', 'Close menu');
-    }
-
-    function isMobileNav() {
-        return window.innerWidth <= 768;
-    }
-
-    sidebarToggle?.addEventListener('click', function () {
-        if (sidebar?.classList.contains('open')) {
-            closeSidebar();
-        } else {
-            openSidebar();
-        }
-    });
-
-    backdrop.addEventListener('click', closeSidebar);
-
-    sidebar?.querySelectorAll('.nav-item').forEach(function (link) {
-        link.addEventListener('click', function () {
-            if (isMobileNav()) {
-                closeSidebar();
-            }
+    if (profileMenu && profileTrigger) {
+        profileTrigger.addEventListener('click', function (e) {
+            e.stopPropagation();
+            const open = profileMenu.classList.toggle('open');
+            profileTrigger.setAttribute('aria-expanded', open ? 'true' : 'false');
         });
-    });
 
-    window.addEventListener('resize', function () {
-        if (!isMobileNav()) {
-            closeSidebar();
-        }
-    });
+        document.addEventListener('click', function () {
+            profileMenu.classList.remove('open');
+            profileTrigger.setAttribute('aria-expanded', 'false');
+        });
+
+        profileMenu.addEventListener('click', function (e) {
+            e.stopPropagation();
+        });
+    }
 
     // Responsive tables: copy header labels onto cells for stacked layout
     document.querySelectorAll('.table-responsive-stack').forEach(function (wrapper) {
@@ -116,7 +81,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // Admin notification dropdown
+    // Notification dropdown
     const notifBell = document.getElementById('notificationBell');
     const notifDrop = document.getElementById('notificationDropdown');
     if (notifBell && notifDrop) {

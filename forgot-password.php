@@ -245,7 +245,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['ajax_action'] ?? '') === '
 <div class="auth-page">
     <div class="auth-panel fade-in">
         <div class="auth-logo">
-            <a href="<?= url('index.php') ?>" style="display:inline-block;margin-bottom:8px;">
+            <a href="<?= url('login.php') ?>" style="display:inline-block;margin-bottom:8px;">
                 <img src="<?= url('assets/logo.png') ?>" alt="BantayPurrPaws" class="auth-logo-img">
             </a>
             <h1 id="fpTitle">Forgot Password</h1>

@@ -49,35 +49,60 @@ $useSweetAlert = true;
 require_once __DIR__ . '/../includes/header.php';
 ?>
 
-<div class="dashboard-hero">
-    <div>
-        <p class="page-eyebrow">Welcome back</p>
-        <h2><?= sanitize(explode(' ', $user['name'])[0]) ?>, <?= isStaff() ? 'ready to support rescues?' : 'here’s your system overview' ?></h2>
-        <p><?php if (isAdministrator()): ?>
-            Manage rescue reports, accounts, adoption approvals, and announcements across BantayPurrPaws.
+<div class="home-hero" style="--hero-image: url('<?= url('assets/dog2.jpg') ?>')">
+    <div class="home-hero-content">
+        <p class="page-eyebrow"><?= isAdministrator() ? 'Administrator' : 'Staff' ?> Portal</p>
+        <h1 class="home-hero-title"><?= sanitize(explode(' ', $user['name'])[0]) ?>, welcome back</h1>
+        <p class="home-hero-subtitle"><?php if (isAdministrator()): ?>
+            Manage rescue reports, accounts, adoption approvals, and announcements.
         <?php else: ?>
-            Handle approved rescue operations, update animal records, and monitor adoption activity.
+            Handle rescue operations, update animal records, and monitor adoption activity.
         <?php endif; ?></p>
     </div>
-    <span class="role-chip <?= roleBadgeClass() ?>"><?= roleLabel() ?></span>
 </div>
 
-<div class="quick-actions">
-    <a href="<?= url('admin/reports.php') ?>" class="quick-action primary">📋 Rescue reports</a>
-    <?php if (canManagePetListings()): ?>
-    <a href="<?= url('admin/pets.php') ?>" class="quick-action">🐾 Animal records</a>
-    <?php endif; ?>
-    <?php if (canReviewAdoptionApplications()): ?>
-    <a href="<?= url('admin/adoption-requests.php') ?>" class="quick-action">📝 Adoption requests</a>
-    <?php elseif (canViewAdoptionApplications()): ?>
-    <a href="<?= url('admin/adoption-requests.php') ?>" class="quick-action">📊 Adoption monitor</a>
-    <?php endif; ?>
-    <?php if (canPostAnnouncements()): ?>
-    <a href="<?= url('admin/announcements.php') ?>" class="quick-action">📢 Post announcement</a>
-    <?php endif; ?>
-    <?php if (canManageAccounts()): ?>
-    <a href="<?= url('admin/users.php') ?>" class="quick-action">👥 User accounts</a>
-    <?php endif; ?>
+<div class="feature-section admin-feature-section">
+    <h2 class="feature-section-title">Quick Access</h2>
+    <div class="feature-grid">
+        <a href="<?= url('admin/reports.php') ?>" class="feature-card">
+            <span class="feature-card-icon">📋</span>
+            <span class="feature-card-title">Rescue Reports</span>
+            <span class="feature-card-desc">Review and manage submitted rescue reports.</span>
+        </a>
+        <?php if (canManagePetListings()): ?>
+        <a href="<?= url('admin/pets.php') ?>" class="feature-card">
+            <span class="feature-card-icon">🐾</span>
+            <span class="feature-card-title">Pet Management</span>
+            <span class="feature-card-desc">Manage animal records and adoption listings.</span>
+        </a>
+        <?php endif; ?>
+        <?php if (canReviewAdoptionApplications() || canViewAdoptionApplications()): ?>
+        <a href="<?= url('admin/adoption-requests.php') ?>" class="feature-card">
+            <span class="feature-card-icon">📝</span>
+            <span class="feature-card-title">Adoption Requests</span>
+            <span class="feature-card-desc">Review and process adoption applications.</span>
+        </a>
+        <?php endif; ?>
+        <?php if (canPostAnnouncements()): ?>
+        <a href="<?= url('admin/announcements.php') ?>" class="feature-card">
+            <span class="feature-card-icon">📢</span>
+            <span class="feature-card-title">Announcements</span>
+            <span class="feature-card-desc">Post and manage system announcements.</span>
+        </a>
+        <?php endif; ?>
+        <?php if (canManageAccounts()): ?>
+        <a href="<?= url('admin/staff.php') ?>" class="feature-card">
+            <span class="feature-card-icon">🛡</span>
+            <span class="feature-card-title">Staff Accounts</span>
+            <span class="feature-card-desc">Manage staff members and permissions.</span>
+        </a>
+        <a href="<?= url('admin/users.php') ?>" class="feature-card">
+            <span class="feature-card-icon">👥</span>
+            <span class="feature-card-title">User Accounts</span>
+            <span class="feature-card-desc">View and manage registered user accounts.</span>
+        </a>
+        <?php endif; ?>
+    </div>
 </div>
 
 <div class="stats-grid">
