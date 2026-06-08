@@ -19,6 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['ajax_action'] ?? '') === '
         exit;
     }
     $user = findUserByEmail($email);
+    // error_log('DEBUG findUserByEmail: ' . json_encode($user ? ['id'=>$user['id'],'provider'=>$user['auth_provider']] : null));
     if (!$user || ($user['auth_provider'] ?? 'local') !== 'local') {
         echo json_encode(['ok' => false, 'message' => "Looks like your email doesn't belong to any account."]);
         exit;
