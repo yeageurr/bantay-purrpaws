@@ -83,7 +83,10 @@ function formatPetStatus(string $status): array {
     };
 }
 
-function formatApplicationStatus(string $status): array {
+function formatApplicationStatus(string $status, string $rejectionReason = '', string $rescheduleResponse = ''): array {
+    if ($status === 'pending' && $rejectionReason === 'reschedule') {
+        return ['label' => 'Reschedule Pending', 'class' => 'status-pending'];
+    }
     return match ($status) {
         'pending'  => ['label' => 'Pending',  'class' => 'status-pending'],
         'approved' => ['label' => 'Approved', 'class' => 'status-rescued'],

@@ -107,3 +107,57 @@ function notifyReportRejected(array $report): bool {
         'report rejected'
     );
 }
+
+function notifyRescheduleProposal(
+    array  $application,
+    string $petName,
+    string $newDate,
+    string $timeStart,
+    string $timeEnd,
+    string $token
+): bool {
+    $application = hydrateAdoptionApplication($application);
+    $email = trim($application['email'] ?? '');
+    $name  = $application['full_name'] ?? 'Applicant';
+    if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        bpp_log('submission-notify', 'error', 'Missing applicant email for reschedule.', ['application_id' => $application['id'] ?? null]);
+        return false;
+    }
+
+    // Build the absolute accept/reject URLs
+    $acceptUrl = absolute_url('reschedule-response.php?token=' . urlencode($token) . '&response=accept');
+    $rejectUrl = absolute_url('reschedule-response.php?token=' . urlencode($token) . '&response=reject');
+
+    return submissionNotifySafe(
+        static fn () => sendRescheduleProposalEmail($email, $name, $newDate, $timeStart, $timeEnd, $acceptUrl, $rejectUrl),
+        'reschedule proposal'
+    );
+}
+
+function notifyPetSubmissionRejectedRequirements(array $application, string $petName): bool {
+    $application = hydrateAdoptionApplication($application);
+    $email = trim($application['email'] ?? '');
+    $name  = $application['full_name'] ?? 'Applicant';
+    if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        bpp_log('submission-notify', 'error', 'Missing applicant email.', ['application_id' => $application['id'] ?? null]);
+        return false;
+    }
+    return submissionNotifySafe(
+        static fn () => sendRequirementsNotMetEmail($email, $name),
+        'requirements not met rejection'
+    );
+}
+
+function notifyAdminOfRescheduleResponse(
+    string $adminEmail,
+    string $adminName,
+    string $applicantName,
+    string $petName,
+    string $response,
+    int    $applicationId
+): bool {
+    return submissionNotifySafe(
+        static fn () => sendAdminRescheduleResponseEmail($adminEmail, $adminName, $applicantName, $petName, $response, $applicationId),
+        'admin reschedule response'
+    );
+}

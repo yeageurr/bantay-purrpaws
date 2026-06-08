@@ -218,7 +218,7 @@ function sendPetSubmissionApprovedEmail(string $to, string $name, string $petNam
 <h2 style="margin:0 0 8px;font-size:20px;color:#2d2520;">Congratulations, {$name}!</h2>
 <p style="margin:0 0 16px;color:#6b5f56;">
   Your adoption application for <strong style="color:{$color};">{$petName}</strong> has been
-  <strong>approved</strong>. Our team will contact you with next steps.
+  <strong>approved.</strong>. 
 </p>
 <p style="margin:0;font-size:13px;color:#9c8f84;">
   Thank you for choosing adoption through BantayPurrPaws.
@@ -393,4 +393,119 @@ function verifyEmailDeliverability(string $email): bool|string
     // Unexpected HTTP code — log and allow (don't block sign-ups on Brevo downtime)
     bpp_log('mailer', 'warning', 'Email deliverability check returned unexpected code; allowing.', ['code' => $httpCode]);
     return true;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Reschedule & requirements-not-met email templates
+// ─────────────────────────────────────────────────────────────────────────────
+
+function sendRescheduleProposalEmail(
+    string $to,
+    string $name,
+    string $newDate,
+    string $timeStart,
+    string $timeEnd,
+    string $acceptUrl,
+    string $rejectUrl
+): bool {
+    $color         = APP_COLOR;
+    $formattedDate = date('F j, Y', strtotime($newDate));
+    $formattedFrom = date('g:i A', strtotime($timeStart));
+    $formattedTo   = date('g:i A', strtotime($timeEnd));
+
+    $inner = <<<HTML
+<p style="margin:0 0 16px;color:#3d3530;">Dear {$name},</p>
+<p style="margin:0 0 16px;color:#3d3530;">
+  Thank you for your adoption application.
+</p>
+<p style="margin:0 0 16px;color:#3d3530;">
+  Your appointment has been rejected due to the unavailability of our admin or staff on your requested time and date. We would like to reschedule your appointment to:
+</p>
+<table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 24px;background:#faf8f6;border:1px solid #ede9e4;border-radius:8px;">
+  <tr>
+    <td style="padding:16px 20px;">
+      <p style="margin:0 0 6px;color:#6b5f56;font-size:.9rem;"><strong style="color:{$color};">Date:</strong> {$formattedDate}</p>
+      <p style="margin:0;color:#6b5f56;font-size:.9rem;"><strong style="color:{$color};">Time:</strong> {$formattedFrom} &ndash; {$formattedTo}</p>
+    </td>
+  </tr>
+</table>
+<p style="margin:0 0 24px;color:#3d3530;">Please confirm if this schedule works for you.</p>
+<table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 24px;">
+  <tr>
+    <td align="center">
+      <a href="{$acceptUrl}" style="display:inline-block;background:{$color};color:#fff;font-weight:600;font-size:15px;padding:13px 28px;border-radius:8px;text-decoration:none;margin-right:12px;">
+        ✔ Accept Reschedule
+      </a>
+      <a href="{$rejectUrl}" style="display:inline-block;background:#ef4444;color:#fff;font-weight:600;font-size:15px;padding:13px 28px;border-radius:8px;text-decoration:none;">
+        ✕ Reject Reschedule
+      </a>
+    </td>
+  </tr>
+</table>
+<p style="margin:0;color:#6b5f56;">Best regards,<br><strong>BantayPurrPaws Team</strong></p>
+HTML;
+
+    return sendRawEmail($to, APP_NAME . ' — Adoption Appointment Reschedule', emailShell('Appointment Reschedule', $inner), $name);
+}
+
+function sendRequirementsNotMetEmail(string $to, string $name): bool {
+    $color = APP_COLOR;
+    $inner = <<<HTML
+<p style="margin:0 0 16px;color:#3d3530;">Dear {$name},</p>
+<p style="margin:0 0 16px;color:#3d3530;">
+  Thank you for your interest in adopting a pet.
+</p>
+<p style="margin:0 0 16px;color:#3d3530;">
+  Your application has been rejected due to some of the required qualifications not being met.
+</p>
+<p style="margin:0 0 16px;color:#3d3530;">
+  Thank you for your understanding.
+</p>
+<p style="margin:0;color:#6b5f56;">Best regards,<br><strong>BantayPurrPaws Team</strong></p>
+HTML;
+
+    return sendRawEmail($to, APP_NAME . ' — Adoption Application Update', emailShell('Adoption Application Update', $inner), $name);
+}
+
+function sendAdminRescheduleResponseEmail(
+    string $to,
+    string $adminName,
+    string $applicantName,
+    string $petName,
+    string $response,
+    int    $applicationId
+): bool {
+    $color    = APP_COLOR;
+    $emoji    = $response === 'accepted' ? '✅' : '❌';
+    $label    = $response === 'accepted' ? 'accepted' : 'rejected';
+    $bgColor  = $response === 'accepted' ? '#d1fae5' : '#fee2e2';
+    $txtColor = $response === 'accepted' ? '#065f46' : '#991b1b';
+    $appUrl   = absolute_url('admin/application.php?id=' . $applicationId);
+
+    $inner = <<<HTML
+<h2 style="margin:0 0 8px;font-size:20px;color:#2d2520;">Hello, {$adminName}!</h2>
+<p style="margin:0 0 16px;color:#6b5f56;">
+  <strong>{$applicantName}</strong> has responded to the reschedule proposal for the adoption of
+  <strong style="color:{$color};">{$petName}</strong>.
+</p>
+<div style="background:{$bgColor};border-radius:8px;padding:16px 20px;margin:0 0 24px;text-align:center;">
+  <span style="font-size:1.5rem;">{$emoji}</span>
+  <p style="margin:8px 0 0;font-size:1rem;font-weight:700;color:{$txtColor};">
+    The applicant has <span style="text-transform:uppercase;">{$label}</span> the reschedule.
+  </p>
+</div>
+<p style="margin:0 0 20px;color:#6b5f56;font-size:.9rem;">
+  Please log in to the admin panel to review the updated application status.
+</p>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr><td align="center">
+    <a href="{$appUrl}" style="display:inline-block;background:{$color};color:#fff;font-weight:600;font-size:15px;padding:13px 28px;border-radius:8px;text-decoration:none;">
+      View Application
+    </a>
+  </td></tr>
+</table>
+HTML;
+
+    $subjectLabel = ucfirst($label);
+    return sendRawEmail($to, APP_NAME . " — Reschedule {$subjectLabel} by Applicant", emailShell("Reschedule {$subjectLabel}", $inner), $adminName);
 }

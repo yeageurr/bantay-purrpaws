@@ -101,7 +101,7 @@ require_once __DIR__ . '/../includes/header.php';
                 </thead>
                 <tbody>
                     <?php foreach ($applications as $app):
-                        $st = formatApplicationStatus($app['status']);
+                        $st = formatApplicationStatus($app['status'], $app['rejection_reason'] ?? '');
                     ?>
                     <tr>
                         <td>

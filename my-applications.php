@@ -46,7 +46,8 @@ require_once __DIR__ . '/includes/header.php';
     <?php else: ?>
         <div class="application-cards">
             <?php foreach ($applications as $app):
-                $status = formatApplicationStatus($app['status']);
+                $status = formatApplicationStatus($app['status'], $app['rejection_reason'] ?? '');
+                $isReschedulePending = ($app['status'] === 'pending' && ($app['rejection_reason'] ?? '') === 'reschedule');
             ?>
             <article class="application-card">
                 <div class="application-card-image">
@@ -74,11 +75,26 @@ require_once __DIR__ . '/includes/header.php';
                             <dd><?= date('M j, Y', strtotime($app['schedule_date'])) ?><?= !empty($app['schedule_time']) ? ' at ' . date('g:i A', strtotime($app['schedule_time'])) : '' ?></dd>
                         </div>
                         <?php endif; ?>
+                        <?php if ($isReschedulePending && !empty($app['reschedule_date'])): ?>
+                        <div>
+                            <dt>Proposed Reschedule</dt>
+                            <dd>
+                                <?= date('M j, Y', strtotime($app['reschedule_date'])) ?>
+                                <?php if (!empty($app['reschedule_time_start']) && !empty($app['reschedule_time_end'])): ?>
+                                    &nbsp;·&nbsp;<?= date('g:i A', strtotime($app['reschedule_time_start'])) ?> – <?= date('g:i A', strtotime($app['reschedule_time_end'])) ?>
+                                <?php endif; ?>
+                            </dd>
+                        </div>
+                        <?php endif; ?>
                     </dl>
                     <?php if ($app['status'] === 'approved'): ?>
                     <p class="text-sm text-secondary">Our team will contact you with next steps for completing the adoption.</p>
+                    <?php elseif ($app['status'] === 'rejected' && ($app['rejection_reason'] ?? '') === 'requirements_not_met'): ?>
+                    <p class="text-sm text-secondary">Your application was not approved as some required qualifications were not met. You may apply for another pet.</p>
                     <?php elseif ($app['status'] === 'rejected'): ?>
                     <p class="text-sm text-secondary">This application was not approved. You may apply for another pet.</p>
+                    <?php elseif ($isReschedulePending): ?>
+                    <p class="text-sm" style="color:var(--accent);">⏳ The admin has proposed a new schedule. Please check your email to Accept or Reject the reschedule.</p>
                     <?php else: ?>
                     <p class="text-sm text-secondary">Your application is under review. We'll notify you when there's an update.</p>
                     <?php endif; ?>
