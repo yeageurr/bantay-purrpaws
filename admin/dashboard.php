@@ -64,11 +64,13 @@ require_once __DIR__ . '/../includes/header.php';
 <div class="feature-section admin-feature-section">
     <h2 class="feature-section-title">Quick Access</h2>
     <div class="feature-grid">
+        <?php if (canManageReports()): ?>
         <a href="<?= url('admin/reports.php') ?>" class="feature-card">
             <span class="feature-card-icon">📋</span>
             <span class="feature-card-title">Rescue Reports</span>
             <span class="feature-card-desc">Review and manage submitted rescue reports.</span>
         </a>
+        <?php endif; ?>
         <?php if (canManagePetListings()): ?>
         <a href="<?= url('admin/pets.php') ?>" class="feature-card">
             <span class="feature-card-icon">🐾</span>
@@ -96,6 +98,8 @@ require_once __DIR__ . '/../includes/header.php';
             <span class="feature-card-title">Staff Accounts</span>
             <span class="feature-card-desc">Manage staff members and permissions.</span>
         </a>
+        <?php endif; ?>
+        <?php if (canManageUsers()): ?>
         <a href="<?= url('admin/users.php') ?>" class="feature-card">
             <span class="feature-card-icon">👥</span>
             <span class="feature-card-title">User Accounts</span>

@@ -25,7 +25,6 @@ if (!$target || $target['role'] !== 'staff') {
 $allPermissions = [
     'manage_reports'     => ['label' => 'Manage Rescue Reports',     'desc'  => 'View, update, and close rescue reports.'],
     'manage_pets'        => ['label' => 'Manage Pet Listings',       'desc'  => 'Create, edit, and delete adoptable pet listings.'],
-    'review_adoptions'   => ['label' => 'Review Adoption Applications', 'desc' => 'Approve or reject adoption applications.'],
     'view_adoptions'     => ['label' => 'View Adoption Queue',       'desc'  => 'Read-only access to adoption applications.'],
     'manage_users'       => ['label' => 'Manage Regular Users',      'desc'  => 'View and manage regular user accounts.'],
     'post_announcements' => ['label' => 'Post Announcements',        'desc'  => 'Publish site-wide announcements.'],

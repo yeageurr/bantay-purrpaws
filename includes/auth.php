@@ -200,6 +200,11 @@ function canManageAccounts(): bool {
     return hasPermission('manage_staff', false);
 }
 
+/** Manage regular user accounts. */
+function canManageUsers(): bool {
+    return hasPermission('manage_users', false);
+}
+
 /** Post system-wide announcements. */
 function canPostAnnouncements(): bool {
     return hasPermission('post_announcements', false);
@@ -251,6 +256,14 @@ function requireCanManagePetListings(): void {
 function requireCanManageAccounts(): void {
     requireAdmin();
     if (!canManageAccounts()) {
+        header('Location: ' . url('admin/dashboard.php'));
+        exit;
+    }
+}
+
+function requireCanManageUsers(): void {
+    requireAdmin();
+    if (!canManageUsers()) {
         header('Location: ' . url('admin/dashboard.php'));
         exit;
     }
