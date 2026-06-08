@@ -14,7 +14,7 @@ $useSweetAlert = true;
 $extraCss      = ['css/adoption.css'];
 
 // Only show available pets (and pending-adoption for context)
-$pets   = db_select('pets', 'order=created_at.desc') ?: [];
+$pets   = db_select('pets', 'status=neq.adopted&order=created_at.desc') ?: [];
 $user   = currentUser();
 $userId = (int) $user['id'];
 
